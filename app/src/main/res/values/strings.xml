@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Plato</string>
+    <string name="chat" />
+    <string name="home" />
+    <string name="friends" />
+    <string name="play" />
+</resources>
