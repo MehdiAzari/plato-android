@@ -28,23 +28,23 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
+                        return true;
 
-                        break;
 
                     case R.id.nav_play:
 
-                        break;
+                        return true;
 
                     case R.id.nav_chat:
                         ChatFragment fragment = new ChatFragment();
                         openFragment(fragment);
-                        break;
+                        return true;
 
 
                     case R.id.nav_friends:
                         FriendsFragment fragment1 = new FriendsFragment();
                         openFragment(fragment1);
-                        break;
+                        return true;
                 }
 
                 return false;

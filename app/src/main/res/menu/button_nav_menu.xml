@@ -3,12 +3,12 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
-        android:title="@string/home"
+        android:title="home"
         />
 
     <item
         android:id="@+id/nav_play"
-        android:icon="@drawable/ic_toy"
+        android:icon="@drawable/ic_game"
         android:title="@string/play"/>
 
     <item

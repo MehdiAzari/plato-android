@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Plato</string>
-    <string name="chat" />
-    <string name="home" />
-    <string name="friends" />
-    <string name="play" />
+    <string name="chat"> chat  </string>
+    <string name="home"> home  </string>
+    <string name="friends"> friends  </string>
+    <string name="play"> play  </string>
+    <string name="send" />
+    <string name="enter_your_message" />
 </resources>
