@@ -6,4 +6,23 @@
     <string name="play"> play  </string>
     <string name="send" />
     <string name="enter_your_message" />
+
+    <string name="sign_in">SIGN IN</string>
+
+    <string name="full_name">Full Name</string>
+
+    <string name="password"> Password</string>
+
+    <string name="continue_text">Continue</string>
+
+    <string name="enter_credentials">Enter Credentials</string>
+
+    <string name="or_sign_up_instead">Or Sign Up instead!</string>
+
+    <string name="create_an_account">Create an Account</string>
+
+
+    <string name="confirm_password">Confirm Password</string>
+
+
 </resources>

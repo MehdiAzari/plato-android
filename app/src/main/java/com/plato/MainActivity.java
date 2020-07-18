@@ -6,12 +6,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.plato.ui.chat.ChatFragment;
 import com.plato.ui.friends.FriendsFragment;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +26,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        /****************************************************************/
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i("felan","HERE");
+                    Socket socket = new Socket("172.20.10.2",4000);
+                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+                    Log.i("Object input stream", ois.readUTF());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+
+
+
+        /****************************************************************/
 
         bottomNavigation = this.findViewById(R.id.button_nav);
         bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
