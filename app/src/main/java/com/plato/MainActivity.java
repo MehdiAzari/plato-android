@@ -31,16 +31,16 @@ public class MainActivity extends AppCompatActivity {
 
         /****************************************************************/
 
-        NetworkHandlerThread networkHandlerThread = NetworkHandlerThread.getInstance();
-        networkHandlerThread.start();
-
-        ObjectOutputStream oos =  NetworkHandlerThread.getInstance().getOos();
-        try {
-           oos.writeUTF("Hi");
-           oos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        NetworkHandlerThread networkHandlerThread = NetworkHandlerThread.getInstance();
+//        networkHandlerThread.start();
+//
+//        ObjectOutputStream oos =  NetworkHandlerThread.getInstance().getOos();
+//        try {
+//           oos.writeUTF("Hi");
+//           oos.flush();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 
 
