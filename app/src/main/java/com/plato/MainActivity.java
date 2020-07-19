@@ -30,20 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
         /****************************************************************/
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Log.i("felan","HERE");
-                    Socket socket = new Socket("172.20.10.2",4000);
-                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-                    Log.i("Object input stream", ois.readUTF());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
+        NetworkHandlerThread networkHandlerThread = new NetworkHandlerThread();
+        networkHandlerThread.start();
 
 
 

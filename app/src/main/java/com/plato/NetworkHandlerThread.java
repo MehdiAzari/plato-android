@@ -9,42 +9,44 @@ import java.net.Socket;
 
 public class NetworkHandlerThread extends Thread {
 
+    private static NetworkHandlerThread instance = null;
     private ObjectOutputStream oos;
-    NetworkHandlerThread( ){
-        super();
+    private ObjectInputStream ois;
 
+    private NetworkHandlerThread( ){
+        super();
+        instance = new NetworkHandlerThread();
+    }
+
+    public NetworkHandlerThread getInstance(){
+        if (instance == null)
+            instance =  new NetworkHandlerThread();
+
+        return instance;
     }
 
     @Override
     public void run() {
         super.run();
         try {
-            Socket socket = new Socket("192.168.1.56", 3000);
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            Socket socket = new Socket("172.20.10.3", 3000);
+            ois = new ObjectInputStream(socket.getInputStream());
             oos = new ObjectOutputStream(socket.getOutputStream());
             while (true) {
                 String message = ois.readUTF();
+
             }
-//                    Log.i("SOCKET", dis.readUTF());
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendMessage(String message){
-        final String finalMessage = message;
+    public ObjectOutputStream getOos() {
+        return oos;
+    }
 
-        Thread senderThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    oos.writeUTF(finalMessage);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        senderThread.start();
-
+    public ObjectInputStream getOis() {
+        return ois;
     }
 }
