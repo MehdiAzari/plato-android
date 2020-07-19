@@ -16,6 +16,7 @@ import com.plato.ui.friends.FriendsFragment;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,8 +31,16 @@ public class MainActivity extends AppCompatActivity {
 
         /****************************************************************/
 
-        NetworkHandlerThread networkHandlerThread = new NetworkHandlerThread();
+        NetworkHandlerThread networkHandlerThread = NetworkHandlerThread.getInstance();
         networkHandlerThread.start();
+
+        ObjectOutputStream oos =  NetworkHandlerThread.getInstance().getOos();
+        try {
+           oos.writeUTF("Hi");
+           oos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
 

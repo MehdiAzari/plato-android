@@ -18,7 +18,7 @@ public class NetworkHandlerThread extends Thread {
         instance = new NetworkHandlerThread();
     }
 
-    public NetworkHandlerThread getInstance(){
+    public static NetworkHandlerThread getInstance(){
         if (instance == null)
             instance =  new NetworkHandlerThread();
 
