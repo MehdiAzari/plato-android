@@ -20,7 +20,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import com.plato.server.* ;
+import com.plato.server.User;
+import com.plato.server.*;
 public class LoginActivity extends AppCompatActivity {
 
     private Button singUpButton;
@@ -35,26 +36,33 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_login);
 
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
-
-        try {
-            networkHandlerThread = NetworkHandlerThread.getInstance();
-            networkHandlerThread.start();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
 
-            Thread.sleep(100);
-            Log.i("Thread","Start");
+        User user = new User("1","@" );
+        Log.i("svUserLog",user.toString());
 
-        } catch (Exception e) {
+                try {
+                    networkHandlerThread = NetworkHandlerThread.getInstance();
+                    networkHandlerThread.start();
 
-            e.printStackTrace();
-        }
+                    Thread.sleep(500);
+                } catch (IOException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                Log.i("Thread","Start");
+
+
+
 
         username = findViewById(R.id.editText_username);
         password = findViewById(R.id.editText_password);
         continueBtn = findViewById(R.id.continue_button);
         singUpButton = findViewById(R.id.sing_up_instead);
+
         singUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,11 +88,12 @@ public class LoginActivity extends AppCompatActivity {
 
                         networkHandlerThread.readObject();
                         networkHandlerThread.getWorker().join();
+                        Thread.sleep(500);
 
-                        User user = (User) networkHandlerThread.getServerObject();
+                        Object  user =  networkHandlerThread.getServerObject();
 
 
-                        Log.i("svUser",user.toString());
+                        Log.i("svUserObj",user.toString());
 
 
                     } catch (InterruptedException e) {
@@ -101,8 +110,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 // after user changes focus from entering username
                 if(!hasFocus){
-
-
+                        Log.i("sv","hasFocusBlockReached");
 
                     try {
                         networkHandlerThread.sendString("checkUsername");
@@ -134,16 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
 
-
-
             }
         });
-
-
-
-
-
-
-
     }
 }

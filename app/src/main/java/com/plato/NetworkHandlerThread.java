@@ -46,9 +46,11 @@ public class NetworkHandlerThread extends Thread {
     @Override
     public void run() {
         try {
+                Log.i("NetworkHandler","running thread");
+            if (this.socket == null) {
+                Log.i("svNew Socket", "making new Socket");
+                socket = new Socket("10.0.2.2", 3838);
 
-            if (socket == null) {
-                socket = new Socket("192.168.42.175", 3535);
                 Log.i("svNew Socket", "New Socket");
             }
             Log.i("svSocket", "Connected to socket");
@@ -82,17 +84,15 @@ public class NetworkHandlerThread extends Thread {
         return serverStringMessage;
     }
 
-    public void sendString(final String ... messages) {
+    public void sendString(final String messages) {
 
          worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    for (int i = 0; i < messages.length; i++) {
-                        oos.writeUTF(messages[i]);
+                        oos.writeUTF(messages);
                         oos.flush();
-                        isBusy = false;
-                    }
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -125,6 +125,8 @@ public class NetworkHandlerThread extends Thread {
             public void run() {
                 try {
                     Log.i("svRead","reading Object");
+
+                    Log.i("svOisAvai" , String.valueOf(ois.available()));
                     serverObject = ois.readObject();
                     Log.i("svRead","got Obj");
                 } catch (IOException | ClassNotFoundException e) {
