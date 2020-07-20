@@ -33,11 +33,10 @@ public class NetworkHandlerThread extends Thread {
 
     @Override
     public void run() {
-        super.run();
         try {
 
             if (socket == null) {
-                socket = new Socket("10.0.2.2", 3535);
+                socket = new Socket("192.168.42.175", 3535);
                 Log.i("svNew Socket", "New Socket");
             }
             Log.i("svSocket", "Connected to socket");
@@ -47,11 +46,11 @@ public class NetworkHandlerThread extends Thread {
                 this.ois = new ObjectInputStream(socket.getInputStream());
 
 
-            while (true){
-                Log.i("svRead","reading UTF");
-                serverStringMessage = ois.readUTF();
-                Log.i("svRead","gotURF");
-            }
+//            while (true){
+//                Log.i("svRead","reading UTF");
+//                serverStringMessage = ois.readUTF();
+//                Log.i("svRead","gotURF");
+//            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,7 +76,6 @@ public class NetworkHandlerThread extends Thread {
             @Override
             public void run() {
                 try {
-                    oos.reset();
                     oos.writeUTF(finalMessage);
                     oos.flush();
                 } catch (IOException e) {
@@ -89,23 +87,21 @@ public class NetworkHandlerThread extends Thread {
 
     }
 
-//    public void startReadingMessage(){
-//        Thread senderThread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    while (true){
-//                        Log.i("svRead","reading UTF");
-//                        serverStringMessage = ois.readUTF();
-//                        Log.i("svRead","gotURF");
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-//        senderThread.start();
-//    }
+    public void startReadingMessage(){
+        Thread senderThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                        Log.i("svRead","reading UTF");
+                        serverStringMessage = ois.readUTF();
+                        Log.i("svRead","gotURF");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        senderThread.start();
+    }
 
     public void sendInt(int message) {
         final int finalMessage = message;

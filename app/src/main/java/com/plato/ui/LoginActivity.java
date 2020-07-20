@@ -32,15 +32,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_login);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
 
         try {
             networkHandlerThread = NetworkHandlerThread.getInstance();
             networkHandlerThread.start();
 
 
-
+            Thread.sleep(100);
             Log.i("Thread","Start");
 
         } catch (Exception e) {
