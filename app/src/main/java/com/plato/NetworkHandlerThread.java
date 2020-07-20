@@ -16,7 +16,17 @@ public class NetworkHandlerThread extends Thread {
     private volatile Socket socket = null;
     private volatile Object serverObject = null;
     private volatile int serverIntMessage ;
-    private static boolean isSending = false;
+    private static boolean isBusy = false;
+
+    private Thread worker ;
+
+    public Thread getWorker() {
+        return worker;
+    }
+
+    public Object getServerObject() {
+        return serverObject;
+    }
 
     private NetworkHandlerThread() throws IOException {
         super();
@@ -73,18 +83,15 @@ public class NetworkHandlerThread extends Thread {
     }
 
     public void sendString(final String ... messages) {
-        while(!isSending) {
 
-        }
-        isSending = true;
-        Thread senderThread = new Thread(new Runnable() {
+         worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     for (int i = 0; i < messages.length; i++) {
                         oos.writeUTF(messages[i]);
                         oos.flush();
-                        isSending = false;
+                        isBusy = false;
                     }
 
                 } catch (IOException e) {
@@ -92,12 +99,12 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        senderThread.start();
+        worker.start();
 
     }
 
     public void readUTF(){
-        Thread senderThread = new Thread(new Runnable() {
+         worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -109,11 +116,11 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        senderThread.start();
+        worker.start();
     }
 
     public void readObject(){
-        Thread senderThread = new Thread(new Runnable() {
+         worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -125,11 +132,11 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        senderThread.start();
+        worker.start();
     }
 
     public void readInt(){
-        Thread senderThread = new Thread(new Runnable() {
+         worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -141,12 +148,12 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        senderThread.start();
+        worker.start();
     }
 
     public void sendInt(int message) {
         final int finalMessage = message;
-        Thread senderThread = new Thread(new Runnable() {
+         worker = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -157,6 +164,6 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        senderThread.start();
+        worker.start();
     }
 }

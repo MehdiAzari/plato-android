@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import com.plato.server.* ;
 public class LoginActivity extends AppCompatActivity {
 
     private Button singUpButton;
@@ -66,10 +67,31 @@ public class LoginActivity extends AppCompatActivity {
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("svUser", String.valueOf(correctUser));
                 if(correctUser){
-                    networkHandlerThread.sendString("login");
-                    networkHandlerThread.sendString(username.getText().toString());
-                    networkHandlerThread.
+
+                    try {
+                        networkHandlerThread.sendString("login");
+                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.sendString(username.getText().toString());
+                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.sendString(password.getText().toString());
+                        networkHandlerThread.getWorker().join();
+
+                        networkHandlerThread.readObject();
+                        networkHandlerThread.getWorker().join();
+
+                        User user = (User) networkHandlerThread.getServerObject();
+
+
+                        Log.i("svUser",user.toString());
+
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+
                 }
             }
         });
