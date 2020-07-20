@@ -103,18 +103,23 @@ public class LoginActivity extends AppCompatActivity {
                 if(!hasFocus){
 
 
-                    networkHandlerThread.sendString("checkUsername");
 
-                    String enteredUsername = username.getText().toString();
                     try {
-                        Thread.sleep(50);
+                        networkHandlerThread.sendString("checkUsername");
+                        networkHandlerThread.getWorker().join();
 
+                        String enteredUsername = username.getText().toString();
 
                         Log.i("username:", enteredUsername);
                         networkHandlerThread.sendString(enteredUsername);
-                        Thread.sleep(50);
+                        networkHandlerThread.getWorker().join();
+
                         networkHandlerThread.readUTF();
+                        networkHandlerThread.getWorker().join();
+
+
                         svMessage = networkHandlerThread.getServerMessage();
+
                         if(svMessage.equals("username-false")) {
                             username.setError("Username not found");
                             correctUser = false;
