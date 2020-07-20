@@ -23,9 +23,11 @@ import java.net.Socket;
 public class LoginActivity extends AppCompatActivity {
 
     private Button singUpButton;
+    private Button continueBtn;
     private NetworkHandlerThread networkHandlerThread = null;
     private EditText username , password;
     private String svMessage;
+    private boolean correctUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
         username = findViewById(R.id.editText_username);
         password = findViewById(R.id.editText_password);
+        continueBtn = findViewById(R.id.continue_button);
         singUpButton = findViewById(R.id.sing_up_instead);
         singUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,34 +63,48 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(correctUser){
+                    networkHandlerThread.sendString("login");
+                    networkHandlerThread.sendString(username.getText().toString());
+                    networkHandlerThread.
+                }
+            }
+        });
 
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 // after user changes focus from entering username
                 if(!hasFocus){
+
+
                     networkHandlerThread.sendString("checkUsername");
+
                     String enteredUsername = username.getText().toString();
                     try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    Log.i("username:",enteredUsername);
-                    networkHandlerThread.sendString(enteredUsername);
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                        Thread.sleep(50);
 
-                    svMessage = networkHandlerThread.getServerMessage();
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
+
+                        Log.i("username:", enteredUsername);
+                        networkHandlerThread.sendString(enteredUsername);
+                        Thread.sleep(50);
+                        networkHandlerThread.readUTF();
+                        svMessage = networkHandlerThread.getServerMessage();
+                        if(svMessage.equals("username-false")) {
+                            username.setError("Username not found");
+                            correctUser = false;
+                        }
+                        else if(svMessage.equals("username-true"))
+                            correctUser = true;
+
+                        Log.i("svMessage", svMessage);
+                    }
+                    catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.i("svMessage",svMessage);
                 }
 
 

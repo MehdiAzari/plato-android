@@ -14,7 +14,9 @@ public class NetworkHandlerThread extends Thread {
     private volatile ObjectInputStream ois = null;
     private String serverStringMessage = "s";
     private volatile Socket socket = null;
-    private int serverIntMessage;
+    private volatile Object serverObject = null;
+    private volatile int serverIntMessage ;
+    private static boolean isSending = false;
 
     private NetworkHandlerThread() throws IOException {
         super();
@@ -70,14 +72,21 @@ public class NetworkHandlerThread extends Thread {
         return serverStringMessage;
     }
 
-    public void sendString(String message) {
-        final String finalMessage = message;
+    public void sendString(final String ... messages) {
+        while(!isSending) {
+
+        }
+        isSending = true;
         Thread senderThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    oos.writeUTF(finalMessage);
-                    oos.flush();
+                    for (int i = 0; i < messages.length; i++) {
+                        oos.writeUTF(messages[i]);
+                        oos.flush();
+                        isSending = false;
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -87,7 +96,7 @@ public class NetworkHandlerThread extends Thread {
 
     }
 
-    public void startReadingMessage(){
+    public void readUTF(){
         Thread senderThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -95,6 +104,38 @@ public class NetworkHandlerThread extends Thread {
                         Log.i("svRead","reading UTF");
                         serverStringMessage = ois.readUTF();
                         Log.i("svRead","gotURF");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        senderThread.start();
+    }
+
+    public void readObject(){
+        Thread senderThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i("svRead","reading Object");
+                    serverObject = ois.readObject();
+                    Log.i("svRead","got Obj");
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        senderThread.start();
+    }
+
+    public void readInt(){
+        Thread senderThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.i("svRead","reading int");
+                    serverIntMessage = ois.readInt();
+                    Log.i("svRead","got int");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
