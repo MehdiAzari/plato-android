@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import com.plato.NetworkHandlerThread;
 import com.plato.R;
@@ -20,48 +23,83 @@ import java.net.Socket;
 public class LoginActivity extends AppCompatActivity {
 
     private Button singUpButton;
+    private NetworkHandlerThread networkHandlerThread = null;
+    private EditText username , password;
+    private String svMessage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitvity_login);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+            networkHandlerThread = NetworkHandlerThread.getInstance();
+            networkHandlerThread.start();
+
+
+
+            Log.i("Thread","Start");
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        username = findViewById(R.id.editText_username);
+        password = findViewById(R.id.editText_password);
         singUpButton = findViewById(R.id.sing_up_instead);
         singUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this,SignUpActivity.class));
+
+                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
             }
         });
 
 
 
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    Log.i("Socket","connecting to socket...");
-//                    Socket socket = new Socket("10.0.2.2", 3535);
-//                    Log.i("Socket","connected");
-//                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-//                    ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-//                    Log.i("Streams","HERE");
-//                    oos.reset();
-//                    oos.writeUTF("HI");
-//                    oos.flush();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                // after user changes focus from entering username
+                if(!hasFocus){
+                    networkHandlerThread.sendString("checkUsername");
+                    String enteredUsername = username.getText().toString();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("username:",enteredUsername);
+                    networkHandlerThread.sendString(enteredUsername);
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
-//        thread.start();
+                    svMessage = networkHandlerThread.getServerMessage();
+                    try {
+                        Thread.sleep(250);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    Log.i("svMessage",svMessage);
+                }
 
-        try {
-            NetworkHandlerThread networkHandlerThread = NetworkHandlerThread.getInstance();
-            networkHandlerThread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+
+            }
+        });
+
+
+
+
+
+
 
     }
 }

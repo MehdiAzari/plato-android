@@ -53,7 +53,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/editText_fullname"
+        android:id="@+id/editText_username"
         android:layout_width="313dp"
         android:layout_height="59dp"
         android:background="@drawable/round_box"
@@ -81,7 +81,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/editText_fullname"
+        app:layout_constraintTop_toBottomOf="@+id/editText_username"
         app:layout_constraintVertical_bias="0.16000003" />
 
     <TextView

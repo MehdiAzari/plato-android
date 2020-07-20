@@ -10,10 +10,10 @@ import java.net.Socket;
 public class NetworkHandlerThread extends Thread {
 
     private static NetworkHandlerThread instance = null;
-    private ObjectOutputStream oos = null;
-    private ObjectInputStream ois = null;
-    private String serverStringMessage;
-    private Socket socket = null;
+    private volatile ObjectOutputStream oos = null;
+    private volatile ObjectInputStream ois = null;
+    private String serverStringMessage = "s";
+    private volatile Socket socket = null;
     private int serverIntMessage;
 
     private NetworkHandlerThread() throws IOException {
@@ -23,9 +23,10 @@ public class NetworkHandlerThread extends Thread {
 
 
     public static NetworkHandlerThread getInstance() throws IOException {
-        if (instance == null)
+        if (instance == null) {
             instance = new NetworkHandlerThread();
 
+        }
         return instance;
     }
 
@@ -35,17 +36,23 @@ public class NetworkHandlerThread extends Thread {
         super.run();
         try {
 
-            if (socket == null)
+            if (socket == null) {
                 socket = new Socket("10.0.2.2", 3535);
-            Log.i("Socket", "Connected to socket");
-            if (oos == null)
-                oos = new ObjectOutputStream(socket.getOutputStream());
-            if (ois == null)
-                ois = new ObjectInputStream(socket.getInputStream());
-
-            while (true) {
-                this.serverStringMessage = ois.readUTF();
+                Log.i("svNew Socket", "New Socket");
             }
+            Log.i("svSocket", "Connected to socket");
+            if (oos == null)
+                this.oos = new ObjectOutputStream(socket.getOutputStream());
+            if (ois == null)
+                this.ois = new ObjectInputStream(socket.getInputStream());
+
+
+            while (true){
+                Log.i("svRead","reading UTF");
+                serverStringMessage = ois.readUTF();
+                Log.i("svRead","gotURF");
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,7 +77,9 @@ public class NetworkHandlerThread extends Thread {
             @Override
             public void run() {
                 try {
+                    oos.reset();
                     oos.writeUTF(finalMessage);
+                    oos.flush();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -80,6 +89,24 @@ public class NetworkHandlerThread extends Thread {
 
     }
 
+//    public void startReadingMessage(){
+//        Thread senderThread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    while (true){
+//                        Log.i("svRead","reading UTF");
+//                        serverStringMessage = ois.readUTF();
+//                        Log.i("svRead","gotURF");
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//        senderThread.start();
+//    }
+
     public void sendInt(int message) {
         final int finalMessage = message;
         Thread senderThread = new Thread(new Runnable() {
@@ -87,6 +114,7 @@ public class NetworkHandlerThread extends Thread {
             public void run() {
                 try {
                     oos.writeInt(finalMessage);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

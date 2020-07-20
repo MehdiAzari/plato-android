@@ -19,13 +19,11 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        username = findViewById(R.id.editText_fullname);
+        username = findViewById(R.id.editText_username);
 
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                String text = username.toString();
-                if(text.length() < 4);
 
             }
         });
