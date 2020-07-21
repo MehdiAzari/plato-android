@@ -156,6 +156,7 @@ public class NetworkHandlerThread extends Thread {
             public void run() {
                 try {
                     oos.writeInt(finalMessage);
+                    oos.flush();
 
                 } catch (IOException e) {
                     e.printStackTrace();

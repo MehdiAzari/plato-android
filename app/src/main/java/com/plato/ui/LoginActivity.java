@@ -36,8 +36,6 @@ public class LoginActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
 
-        final User user = new User("1","@" );
-        Log.i("svUserLog",user.toString());
 
                 try {
                     networkHandlerThread = NetworkHandlerThread.getInstance();
@@ -96,7 +94,10 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         else {
                             Log.i("svUserObj",user.toString());
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("user",(User)user);
+                            startActivity(intent);
+
                             LoginActivity.this.finish();
                         }
 
@@ -158,16 +159,4 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        try {
-            networkHandlerThread.getOos().close();
-            networkHandlerThread.getOis().close();
-            networkHandlerThread.getSocket().close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

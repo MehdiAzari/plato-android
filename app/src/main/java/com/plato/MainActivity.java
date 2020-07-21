@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.plato.server.User;
 import com.plato.ui.chat.ChatFragment;
 import com.plato.ui.friends.FriendsFragment;
 
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        User user =  (User) this.getIntent().getSerializableExtra("user");
 
         /****************************************************************/
 
