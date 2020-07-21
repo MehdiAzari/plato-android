@@ -5,23 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.plato.MainActivity;
 import com.plato.NetworkHandlerThread;
 import com.plato.R;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 import com.plato.server.User;
-import com.plato.server.*;
+
 public class LoginActivity extends AppCompatActivity {
 
     private Button singUpButton;
@@ -40,14 +36,14 @@ public class LoginActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
 
-        User user = new User("1","@" );
+        final User user = new User("1","@" );
         Log.i("svUserLog",user.toString());
 
                 try {
                     networkHandlerThread = NetworkHandlerThread.getInstance();
                     networkHandlerThread.start();
 
-                    Thread.sleep(500);
+                    Thread.sleep(50);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -79,21 +75,31 @@ public class LoginActivity extends AppCompatActivity {
                 if(correctUser){
 
                     try {
-                        networkHandlerThread.sendString("login");
-                        networkHandlerThread.getWorker().join();
-                        networkHandlerThread.sendString(username.getText().toString());
-                        networkHandlerThread.getWorker().join();
-                        networkHandlerThread.sendString(password.getText().toString());
-                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.sendUTF("login");
+                        networkHandlerThread.getIOHandler().join();
+                        networkHandlerThread.sendUTF(username.getText().toString());
+                        networkHandlerThread.getIOHandler().join();
+                        networkHandlerThread.sendUTF(password.getText().toString());
+                        networkHandlerThread.getIOHandler().join();
 
                         networkHandlerThread.readObject();
-                        networkHandlerThread.getWorker().join();
-                        Thread.sleep(500);
+                        networkHandlerThread.getIOHandler().join();
+                        Thread.sleep(50);
 
                         Object  user =  networkHandlerThread.getServerObject();
 
+                        // if user enters wrong password server sends null object
+                        if(user == null){
 
-                        Log.i("svUserObj",user.toString());
+                            password.setError("Your password is incorrect");
+
+                        }
+                        else {
+                            Log.i("svUserObj",user.toString());
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            LoginActivity.this.finish();
+                        }
+
 
 
                     } catch (InterruptedException e) {
@@ -111,19 +117,25 @@ public class LoginActivity extends AppCompatActivity {
                 // after user changes focus from entering username
                 if(!hasFocus){
                         Log.i("sv","hasFocusBlockReached");
+                    String enteredUsername = username.getText().toString();
+
+                        if(enteredUsername.equals("")) {
+                            username.setError("Username Can't be empty");
+                            return;
+                        }
 
                     try {
-                        networkHandlerThread.sendString("checkUsername");
-                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.sendUTF("checkUsername");
+                        networkHandlerThread.getIOHandler().join();
 
-                        String enteredUsername = username.getText().toString();
+
 
                         Log.i("username:", enteredUsername);
-                        networkHandlerThread.sendString(enteredUsername);
-                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.sendUTF(enteredUsername);
+                        networkHandlerThread.getIOHandler().join();
 
                         networkHandlerThread.readUTF();
-                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.getIOHandler().join();
 
 
                         svMessage = networkHandlerThread.getServerMessage();
@@ -144,5 +156,18 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        try {
+            networkHandlerThread.getOos().close();
+            networkHandlerThread.getOis().close();
+            networkHandlerThread.getSocket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.plato.TicTacToe;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -15,9 +14,6 @@ import com.plato.NetworkHandlerThread;
 import com.plato.R;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 public class xoGame extends AppCompatActivity {
     private NetworkHandlerThread networkHandlerThread;
@@ -69,17 +65,17 @@ public class xoGame extends AppCompatActivity {
 
         try {
 
-            networkHandlerThread.sendString("make_room");
-            networkHandlerThread.getWorker().join();
+            networkHandlerThread.sendUTF("make_room");
+            networkHandlerThread.getIOHandler().join();
             Log.i("log1", "read1");
-            networkHandlerThread.sendString("xo");
-            networkHandlerThread.getWorker().join();
+            networkHandlerThread.sendUTF("xo");
+            networkHandlerThread.getIOHandler().join();
             Log.i("log2", "read2");
-            networkHandlerThread.sendString("casual");
-            networkHandlerThread.getWorker().join();
+            networkHandlerThread.sendUTF("casual");
+            networkHandlerThread.getIOHandler().join();
             Log.i("log3", "read3");
             networkHandlerThread.sendInt(2);
-            networkHandlerThread.getWorker().join();
+            networkHandlerThread.getIOHandler().join();
             Log.i("log4", "read4");
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -91,7 +87,7 @@ public class xoGame extends AppCompatActivity {
 
         try {
             networkHandlerThread.readUTF();
-            networkHandlerThread.getWorker().join();
+            networkHandlerThread.getIOHandler().join();
             typeAndTurn = networkHandlerThread.getServerMessage();
         }
         catch (InterruptedException e) {
@@ -140,7 +136,7 @@ public class xoGame extends AppCompatActivity {
                     String result = null;
                     try {
                         networkHandlerThread.readUTF();
-                        networkHandlerThread.getWorker().join();
+                        networkHandlerThread.getIOHandler().join();
                         result = networkHandlerThread.getServerMessage();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -159,7 +155,7 @@ public class xoGame extends AppCompatActivity {
                 try {
                     //added to room.java
                     networkHandlerThread.readUTF();
-                    networkHandlerThread.getWorker().join();
+                    networkHandlerThread.getIOHandler().join();
                      move = networkHandlerThread.getServerMessage();
                      opponentMove(move);
                 } catch (InterruptedException e) {
@@ -168,7 +164,7 @@ public class xoGame extends AppCompatActivity {
                 String result = null;
                 try {
                     networkHandlerThread.readUTF();
-                    networkHandlerThread.getWorker().join();
+                    networkHandlerThread.getIOHandler().join();
                     result = networkHandlerThread.getServerMessage();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -191,55 +187,55 @@ public class xoGame extends AppCompatActivity {
         switch (v.getId()){
             case R.id.button1:{
                 buttons[0].setText(typeString);
-                networkHandlerThread.sendString("11");
+                networkHandlerThread.sendUTF("11");
                 clicked = true;
                 break;
             }
             case R.id.button2:{
                 buttons[1].setText(typeString);
-                networkHandlerThread.sendString("12");
+                networkHandlerThread.sendUTF("12");
                 clicked = true;
                 break;
             }
             case R.id.button3:{
                 buttons[2].setText(typeString);
-                networkHandlerThread.sendString("13");
+                networkHandlerThread.sendUTF("13");
                 clicked = true;
                 break;
             }
             case R.id.button4:{
                 buttons[3].setText(typeString);
-                networkHandlerThread.sendString("21");
+                networkHandlerThread.sendUTF("21");
                 clicked = true;
                 break;
             }
             case R.id.button5:{
                 buttons[4].setText(typeString);
-                networkHandlerThread.sendString("22");
+                networkHandlerThread.sendUTF("22");
                 clicked = true;
                 break;
             }
             case R.id.button6:{
                 buttons[5].setText(typeString);
-               networkHandlerThread.sendString("23");
+               networkHandlerThread.sendUTF("23");
                 clicked = true;
                 break;
             }
             case R.id.button7:{
                 buttons[6].setText(typeString);
-                networkHandlerThread.sendString("31");
+                networkHandlerThread.sendUTF("31");
                 clicked = true;
                 break;
             }
             case R.id.button8:{
                 buttons[7].setText(typeString);
-                networkHandlerThread.sendString("32");
+                networkHandlerThread.sendUTF("32");
                 clicked = true;
                 break;
             }
             case R.id.button9:{
                 buttons[8].setText(typeString);
-                networkHandlerThread.sendString("33");
+                networkHandlerThread.sendUTF("33");
                 clicked = true;
                 break;
             }

@@ -16,17 +16,7 @@ public class NetworkHandlerThread extends Thread {
     private volatile Socket socket = null;
     private volatile Object serverObject = null;
     private volatile int serverIntMessage ;
-    private static boolean isBusy = false;
-
-    private Thread worker ;
-
-    public Thread getWorker() {
-        return worker;
-    }
-
-    public Object getServerObject() {
-        return serverObject;
-    }
+    private Thread IOHandler;
 
     private NetworkHandlerThread() throws IOException {
         super();
@@ -54,22 +44,20 @@ public class NetworkHandlerThread extends Thread {
                 Log.i("svNew Socket", "New Socket");
             }
             Log.i("svSocket", "Connected to socket");
+
             if (oos == null)
                 this.oos = new ObjectOutputStream(socket.getOutputStream());
             if (ois == null)
                 this.ois = new ObjectInputStream(socket.getInputStream());
 
-
-//            while (true){
-//                Log.i("svRead","reading UTF");
-//                serverStringMessage = ois.readUTF();
-//                Log.i("svRead","gotURF");
-//            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 
     public ObjectOutputStream getOos() {
@@ -84,9 +72,17 @@ public class NetworkHandlerThread extends Thread {
         return serverStringMessage;
     }
 
-    public void sendString(final String messages) {
+    public Object getServerObject() {
+        return serverObject;
+    }
 
-         worker = new Thread(new Runnable() {
+    public Thread getIOHandler() {
+        return IOHandler;
+    }
+
+    public void sendUTF(final String messages) {
+
+         IOHandler = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -99,12 +95,12 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        worker.start();
+        IOHandler.start();
 
     }
 
     public void readUTF(){
-         worker = new Thread(new Runnable() {
+         IOHandler = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -116,11 +112,11 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        worker.start();
+        IOHandler.start();
     }
 
     public void readObject(){
-         worker = new Thread(new Runnable() {
+         IOHandler = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -134,11 +130,11 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        worker.start();
+        IOHandler.start();
     }
 
     public void readInt(){
-         worker = new Thread(new Runnable() {
+         IOHandler = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -150,12 +146,12 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        worker.start();
+        IOHandler.start();
     }
 
     public void sendInt(int message) {
         final int finalMessage = message;
-         worker = new Thread(new Runnable() {
+         IOHandler = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -166,6 +162,7 @@ public class NetworkHandlerThread extends Thread {
                 }
             }
         });
-        worker.start();
+        IOHandler.start();
     }
+
 }
