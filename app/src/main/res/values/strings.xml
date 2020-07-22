@@ -24,6 +24,8 @@
 
     <string name="confirm_password">Confirm Password</string>
     <string name="sing_up">SING UP</string>
+    <string name="last_msg">last msg</string>
+    <string name="name">Name</string>
 
 
 </resources>

@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.SignUpActivity"></activity>
-        <activity android:name=".conversation" />
+        <activity android:name=".ConversationActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.LoginActivity">
             <intent-filter>
