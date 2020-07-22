@@ -75,6 +75,7 @@
         android:background="@drawable/round_box"
         android:ems="10"
         android:hint="@string/password"
+        android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:paddingLeft="20dp"
         android:textColorHint="@color/background_color"

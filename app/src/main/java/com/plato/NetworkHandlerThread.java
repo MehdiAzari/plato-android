@@ -2,6 +2,8 @@ package com.plato;
 
 import android.util.Log;
 
+import com.plato.server.User;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,7 +17,8 @@ public class NetworkHandlerThread extends Thread {
     private String serverStringMessage = "s";
     private volatile Socket socket = null;
     private volatile Object serverObject = null;
-    private volatile int serverIntMessage ;
+    private volatile int serverIntMessage;
+    private User user = null;
     private Thread IOHandler;
 
     private NetworkHandlerThread() throws IOException {
@@ -78,6 +81,14 @@ public class NetworkHandlerThread extends Thread {
 
     public Thread getIOHandler() {
         return IOHandler;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void sendUTF(final String messages) {

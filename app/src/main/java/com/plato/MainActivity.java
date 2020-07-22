@@ -2,25 +2,25 @@ package com.plato;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.MenuItem;
 
-import com.google.android.material.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.plato.server.User;
+
 import com.plato.ui.chat.ChatFragment;
 import com.plato.ui.friends.FriendsFragment;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    private Toolbar myToolbar;
 
     BottomNavigationView bottomNavigation;
 
@@ -29,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        User user =  (User) this.getIntent().getSerializableExtra("user");
+        myToolbar = findViewById(R.id.myToolBar);
+        setSupportActionBar(myToolbar);
+
 
         /****************************************************************/
 
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
 
 
         /****************************************************************/
@@ -78,10 +79,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void openFragment(Fragment fragment){
+    public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container,fragment);
+        transaction.replace(R.id.fragment_container, fragment);
 //        transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        try {
+            NetworkHandlerThread networkHandlerThread = NetworkHandlerThread.getInstance();
+            networkHandlerThread.getOos().close();
+            networkHandlerThread.getOis().close();
+            networkHandlerThread.getSocket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        super.onBackPressed();
+
     }
 }

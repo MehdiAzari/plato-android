@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button singUpButton;
     private Button continueBtn;
     private NetworkHandlerThread networkHandlerThread = null;
-    private EditText username , password;
+    private EditText username, password;
     private String svMessage;
     private boolean correctUser = false;
 
@@ -36,20 +36,17 @@ public class LoginActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
 
+        try {
+            networkHandlerThread = NetworkHandlerThread.getInstance();
+            networkHandlerThread.start();
 
-                try {
-                    networkHandlerThread = NetworkHandlerThread.getInstance();
-                    networkHandlerThread.start();
-
-                    Thread.sleep(50);
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
-                Log.i("Thread","Start");
+            Thread.sleep(50);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
+        Log.i("Thread", "Start");
 
 
         username = findViewById(R.id.editText_username);
@@ -70,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i("svUser", String.valueOf(correctUser));
-                if(correctUser){
+                if (correctUser) {
 
                     try {
                         networkHandlerThread.sendUTF("login");
@@ -84,23 +81,21 @@ public class LoginActivity extends AppCompatActivity {
                         networkHandlerThread.getIOHandler().join();
                         Thread.sleep(50);
 
-                        Object  user =  networkHandlerThread.getServerObject();
+                        Object user = networkHandlerThread.getServerObject();
 
                         // if user enters wrong password server sends null object
-                        if(user == null){
+                        if (user == null) {
 
                             password.setError("Your password is incorrect");
 
-                        }
-                        else {
-                            Log.i("svUserObj",user.toString());
+                        } else {
+                            Log.i("svUserObj", user.toString());
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("user",(User)user);
+                            networkHandlerThread.setUser((User)user);
                             startActivity(intent);
 
                             LoginActivity.this.finish();
                         }
-
 
 
                     } catch (InterruptedException e) {
@@ -116,19 +111,18 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 // after user changes focus from entering username
-                if(!hasFocus){
-                        Log.i("sv","hasFocusBlockReached");
+                if (!hasFocus) {
+                    Log.i("sv", "hasFocusBlockReached");
                     String enteredUsername = username.getText().toString();
 
-                        if(enteredUsername.equals("")) {
-                            username.setError("Username Can't be empty");
-                            return;
-                        }
+                    if (enteredUsername.equals("")) {
+                        username.setError("Username Can't be empty");
+                        return;
+                    }
 
                     try {
                         networkHandlerThread.sendUTF("checkUsername");
                         networkHandlerThread.getIOHandler().join();
-
 
 
                         Log.i("username:", enteredUsername);
@@ -141,16 +135,14 @@ public class LoginActivity extends AppCompatActivity {
 
                         svMessage = networkHandlerThread.getServerMessage();
 
-                        if(svMessage.equals("username-false")) {
+                        if (svMessage.equals("username-false")) {
                             username.setError("Username not found");
                             correctUser = false;
-                        }
-                        else if(svMessage.equals("username-true"))
+                        } else if (svMessage.equals("username-true"))
                             correctUser = true;
 
                         Log.i("svMessage", svMessage);
-                    }
-                    catch (InterruptedException e) {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -159,4 +151,18 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+
+        try {
+            NetworkHandlerThread networkHandlerThread = NetworkHandlerThread.getInstance();
+            networkHandlerThread.getOos().close();
+            networkHandlerThread.getOis().close();
+            networkHandlerThread.getSocket().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.onBackPressed();
+
+    }
 }

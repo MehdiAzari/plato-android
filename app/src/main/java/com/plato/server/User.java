@@ -11,9 +11,10 @@ public class User implements Serializable {
     private volatile byte[] profilePic = null;
     private volatile ArrayList<User> friends;
     private volatile String bioText;
+    boolean isDefaultAvatar = true;
     private volatile ConcurrentHashMap<String, Integer> gamesList; // Mapping games to their scores !
     private volatile ConcurrentHashMap<User, Conversation> conversations;
-    private volatile ArrayList<String> friendRequests;  // String are  usernames (senders)...
+    private volatile ArrayList<String> friendRequests;  // String are  username's (senders)...
 
     public User(String username, String password) {
         this.password = password;

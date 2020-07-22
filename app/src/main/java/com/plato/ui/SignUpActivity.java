@@ -28,8 +28,8 @@ public class SignUpActivity extends AppCompatActivity {
     private boolean isAvatarDefault = true;
     private String svMessage;
     private boolean usernameExists = true;
+    private boolean isPasswordValid = false;
     private boolean passwordsMatch = false;
-    private User user = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
         username = findViewById(R.id.editText_username);
         password = findViewById(R.id.editText_password);
         confirmPassword = findViewById(R.id.editText_confirmpassword);
-        avatar = findViewById(R.id.avatar);
+        avatar = findViewById(R.id.appbar_avatar);
         btnSingUp = findViewById(R.id.continue_button);
 
         username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -97,10 +97,10 @@ public class SignUpActivity extends AppCompatActivity {
                 if(!hasFocus){
                     if(input.length() <= 5 ) {
                         password.setError("Password must be more than 5 Characters");
-                        passwordsMatch = false;
+                        isPasswordValid = false;
                     }
                     else {
-                        passwordsMatch = true;
+                        isPasswordValid = true;
                     }
                 }
             }
@@ -120,24 +120,33 @@ public class SignUpActivity extends AppCompatActivity {
                 String input = confirmPassword.getText().toString();
                 if(!givenPass.equals(input)){
                     confirmPassword.setError("Passwords do not match");
+                    passwordsMatch = false;
                 }
+                else passwordsMatch = true;
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                String givenPass = password.getText().toString();
+                String input = confirmPassword.getText().toString();
+                if(!givenPass.equals(input)){
+                    confirmPassword.setError("Passwords do not match");
+                    passwordsMatch = false;
+                }
+                else passwordsMatch = true;
             }
         });
 
         btnSingUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!usernameExists && passwordsMatch ){
-
+                Log.i("svSignUp","Clicked");
+                if(!usernameExists && isPasswordValid && passwordsMatch){
+                    Log.i("svSignUp","matches condition");
                     try {
                         networkHandlerThread.sendUTF("register");
                         networkHandlerThread.getIOHandler().join();
-
+                        Log.i("svSignUp","sent register to server");
                         String u = username.getText().toString();
                         String p = password.getText().toString();
 
@@ -153,12 +162,12 @@ public class SignUpActivity extends AppCompatActivity {
                             networkHandlerThread.readObject();
                             networkHandlerThread.getIOHandler().join();
 
-                            user = (User) networkHandlerThread.getServerObject();
+                            User user = (User) networkHandlerThread.getServerObject();
                             Log.i("svRegisterNewUser",user.toString());
 
                             Thread.sleep(100);
                             Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                            intent.putExtra("user",(User)user);
+                            networkHandlerThread.setUser(user);
                             startActivity(intent);
 
                             SignUpActivity.this.finish();
