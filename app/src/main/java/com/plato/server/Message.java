@@ -5,6 +5,11 @@ import java.util.Date;
 
 public class Message implements Serializable {
     private static final long serialVersionUID = -1433121233L;
+
+    public Date getDate() {
+        return date;
+    }
+
     private Date date;
 
 

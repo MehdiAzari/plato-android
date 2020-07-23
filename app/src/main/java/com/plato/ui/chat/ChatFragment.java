@@ -1,5 +1,6 @@
 package com.plato.ui.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.plato.MainActivity;
 import com.plato.NetworkHandlerThread;
 import com.plato.R;
 import com.plato.server.Conversation;
@@ -50,6 +52,7 @@ public class ChatFragment extends Fragment {
                 while (true){
                     User client = networkHandlerThread.getUser();
                     try {
+                        Thread.sleep(3000); //updates chat every 3 sec
                         networkHandlerThread.sendUTF("update_chat");
                         networkHandlerThread.join();
                         networkHandlerThread.readObject();
@@ -68,7 +71,7 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
-        chatUpdater.start();
+       // chatUpdater.start();
     }
 
     @Nullable
@@ -78,21 +81,22 @@ public class ChatFragment extends Fragment {
 
         mRecyclerView = root.findViewById(R.id.conversationsRecyclerView);
         mRecyclerView.setHasFixedSize(true);
-        ArrayList<User> users = new ArrayList<>(conversations.keySet());
+        final ArrayList<User> users = new ArrayList<>(conversations.keySet());
         mLayoutManager = new LinearLayoutManager(getContext());
         mAdapter = new ChatListAdapter(users);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-//        mAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//                Intent intent = new Intent(MainActivity.this,ViewTaskActivity.class);
-//                lastItemPosition = position;
-//                intent.putExtra("pos",position);
-//                startActivity(intent);
-//            }
-//        });
+        mAdapter.setOnItemClickListener(new ChatListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getContext(), ConversationActivity.class);
+                lastItemPosition = position;
+                intent.putExtra("pos",position);
+                intent.putExtra("destUser", users.get(position));
+                startActivity(intent);
+            }
+        });
         return root;
     }
 

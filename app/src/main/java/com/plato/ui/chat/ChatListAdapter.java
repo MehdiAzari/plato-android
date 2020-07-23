@@ -1,5 +1,6 @@
 package com.plato.ui.chat;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.plato.MainActivity;
 import com.plato.NetworkHandlerThread;
 import com.plato.R;
 import com.plato.server.Conversation;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.TaskViewHolder> {
-    private ArrayList<User> mExampleList;
+    public static ArrayList<User> mExampleList;
     private NetworkHandlerThread networkHandlerThread;
     private OnItemClickListener mListener;
 
@@ -51,12 +53,15 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.TaskVi
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
+                            final User currentItem = mExampleList.get(position);
                             listener.onItemClick(position);
+
                         }
                     }
                 }
@@ -83,19 +88,29 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.TaskVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final TaskViewHolder holder, int position) {
-        final User currentItem = mExampleList.get(position);
+    public void onBindViewHolder(@NonNull final TaskViewHolder holder, final int position) {
+        final User currentUser = mExampleList.get(position);
 
-        Log.i("rec",currentItem.getUsername());
-        Log.i("rec", String.valueOf(mExampleList.size()));
-        holder.mName.setText(currentItem.getUsername());
+//        Log.i("rec",currentUser.getUsername());
+//        Log.i("rec", String.valueOf(mExampleList.size()));
+        holder.mName.setText(currentUser.getUsername());
         User client = networkHandlerThread.getUser();
         ConcurrentHashMap<User,Conversation> c = client.getConversations();
-        Conversation conversation = c.get(currentItem);
+        Conversation conversation = c.get(currentUser);
         ArrayList<Message> list = conversation.getMessages();
         int indexOfLastMsg = list.size();
         TextMessage textMessage = (TextMessage) list.get(indexOfLastMsg - 1);
         holder.mLastMsg.setText(textMessage.getContent());
+
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(v.getContext(), ConversationActivity.class);
+//                intent.putExtra("pos",position);
+//                intent.putExtra("destUser", currentUser);
+//                v.getContext().startActivity(intent);
+//            }
+//        });
 
 
 
