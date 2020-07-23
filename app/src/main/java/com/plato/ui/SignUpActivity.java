@@ -106,6 +106,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+
         confirmPassword.addTextChangedListener(new TextWatcher() {
 
 

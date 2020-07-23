@@ -1,20 +1,22 @@
 package com.plato.server;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.ArrayList;
+
 import java.util.concurrent.ConcurrentHashMap;
 
+
 public class User implements Serializable {
-    private static final long serialVersionUID = -123L;
+    private static final long serialVersionUID = -121231233L;
     private String username;
     private String password;
+    private boolean isDefaultAvatar = true;
     private volatile byte[] profilePic = null;
     private volatile ArrayList<User> friends;
     private volatile String bioText;
-    boolean isDefaultAvatar = true;
     private volatile ConcurrentHashMap<String, Integer> gamesList; // Mapping games to their scores !
     private volatile ConcurrentHashMap<User, Conversation> conversations;
-    private volatile ArrayList<String> friendRequests;  // String are  username's (senders)...
+    private volatile ArrayList<String> friendRequests;  // String are  usernames (senders)...
 
     public User(String username, String password) {
         this.password = password;
@@ -88,6 +90,10 @@ public class User implements Serializable {
         return gamesList.get(game);
     }
 
+    public void setConversations(ConcurrentHashMap<User, Conversation> conversations) {
+        this.conversations = conversations;
+    }
+
     public Conversation getConversation(User destUser) {
         if (conversations.contains(destUser)) {
             return conversations.get(destUser);
@@ -103,23 +109,30 @@ public class User implements Serializable {
         this.username = username;
     }
 
+    public boolean isDefaultAvatar() {
+        return isDefaultAvatar;
+    }
+
+    public void setDefaultAvatar(boolean defaultAvatar) {
+        isDefaultAvatar = defaultAvatar;
+    }
+
     /// Just for Test
     public ConcurrentHashMap<User, Conversation>
     getConversations() {
         return conversations;
     }
 
-
-//    @Override
-//   logi public String toString() {
-//        return "User{" +
-//                "username='" + username + '\'' +
-//                ", password='" + password + '\'' +
-//                ", friends=" + friends +
-//                ", bioText='" + bioText + '\'' +
-//                ", gamesList=" + gamesList +
-//                ", conversations=" + conversations +
-//                ", friendRequests=" + friendRequests +
-//                '}';
-//    }
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", friends=" + friends +
+                ", bioText='" + bioText + '\'' +
+                ", gamesList=" + gamesList +
+                ", conversations=" + conversations.values() +
+                ", friendRequests=" + friendRequests +
+                '}';
+    }
 }

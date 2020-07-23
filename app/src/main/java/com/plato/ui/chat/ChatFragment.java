@@ -1,6 +1,7 @@
 package com.plato.ui.chat;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +20,6 @@ import com.plato.server.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatFragment extends Fragment {
@@ -33,6 +34,7 @@ public class ChatFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         try {
             networkHandlerThread = NetworkHandlerThread.getInstance();
             user = networkHandlerThread.getUser();
@@ -41,14 +43,40 @@ public class ChatFragment extends Fragment {
         }
 
         conversations = user.getConversations();
+
+        Thread chatUpdater = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    User client = networkHandlerThread.getUser();
+                    try {
+                        networkHandlerThread.sendUTF("update_chat");
+                        networkHandlerThread.join();
+                        networkHandlerThread.readObject();
+                        networkHandlerThread.join();
+                        Object o = networkHandlerThread.getServerObject();
+
+                        if(o != null){
+                            if(o instanceof  ConcurrentHashMap)
+                            client.setConversations((ConcurrentHashMap<User, Conversation>) o);
+                            Log.i("svConvUpdate","client's conversations updated");
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        });
+        chatUpdater.start();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_conversation,container,false);
+        View root = inflater.inflate(R.layout.fragment_chatlist,container,false);
 
-        mRecyclerView = root.findViewById(R.id.recyclerView);
+        mRecyclerView = root.findViewById(R.id.conversationsRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         ArrayList<User> users = new ArrayList<>(conversations.keySet());
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -65,13 +93,16 @@ public class ChatFragment extends Fragment {
 //                startActivity(intent);
 //            }
 //        });
-
-
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
 
-
+        mAdapter.notifyItemChanged(lastItemPosition);
+        mAdapter.notifyDataSetChanged();
+    }
 }
 
 

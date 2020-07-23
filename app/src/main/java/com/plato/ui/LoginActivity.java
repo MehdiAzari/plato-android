@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                             password.setError("Your password is incorrect");
 
                         } else {
-                            Log.i("svUserObj", user.toString());
+                            Log.i("svUserObj", "got user obj");
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             networkHandlerThread.setUser((User)user);
                             startActivity(intent);

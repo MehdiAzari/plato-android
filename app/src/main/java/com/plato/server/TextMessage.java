@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class TextMessage extends Message implements Serializable {
+    private static final long serialVersionUID = -1232451233L;
     private User sender ;
     private String content ;
 
@@ -15,6 +16,14 @@ public class TextMessage extends Message implements Serializable {
     }
     // Testing
 
+
+    public User getSender() {
+        return sender;
+    }
+
+    public String getContent() {
+        return content;
+    }
 
     @Override
     public String toString() {

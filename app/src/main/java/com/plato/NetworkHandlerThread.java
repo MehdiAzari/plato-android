@@ -42,7 +42,7 @@ public class NetworkHandlerThread extends Thread {
                 Log.i("NetworkHandler","running thread");
             if (this.socket == null) {
                 Log.i("svNew Socket", "making new Socket");
-                socket = new Socket("10.0.2.2", 3838);
+                socket = new Socket("10.0.2.2", 4000);
 
                 Log.i("svNew Socket", "New Socket");
             }

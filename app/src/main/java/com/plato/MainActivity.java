@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, fragment);
-//        transaction.addToBackStack(null);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 
