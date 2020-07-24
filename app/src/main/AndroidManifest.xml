@@ -17,6 +17,8 @@
         <activity android:name=".conversation" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ui.LoginActivity">
+        </activity>
+        <activity android:name=".TicTacToe.xoGame">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

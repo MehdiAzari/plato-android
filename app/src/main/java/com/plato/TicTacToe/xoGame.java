@@ -25,7 +25,7 @@ public class xoGame extends AppCompatActivity {
     String typeString;
     String opponentString;
 
-    //@SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +47,12 @@ public class xoGame extends AppCompatActivity {
         }
         //networkHandlerThread.setDaemon(true);
         networkHandlerThread.start();
-        try {
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                try {
             networkHandlerThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -68,7 +73,16 @@ public class xoGame extends AppCompatActivity {
         TextView resultText = findViewById(R.id.result_text);
 
         try {
-
+            Log.i("log1", "read0");
+            networkHandlerThread.sendString("login");
+            networkHandlerThread.getWorker().join();
+            Log.i("log1", "read00");
+            networkHandlerThread.sendString("amir");
+            networkHandlerThread.getWorker().join();
+            networkHandlerThread.sendString("1234");
+            networkHandlerThread.getWorker().join();
+            networkHandlerThread.readObject();
+            networkHandlerThread.getWorker().join();
             networkHandlerThread.sendString("make_room");
             networkHandlerThread.getWorker().join();
             Log.i("log1", "read1");
@@ -85,47 +99,40 @@ public class xoGame extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        String typeAndTurn = null;
-
-
-
-        try {
-            networkHandlerThread.readUTF();
-            networkHandlerThread.getWorker().join();
-            typeAndTurn = networkHandlerThread.getServerMessage();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        char type = typeAndTurn.charAt(0);
-        typeString = type + "";
-        if(type=='X') opponentString = "O";
-        else opponentString = "X";
-        boolean showType = false;
-
-        if(!showType) {
-            if (type == 'X') {
-                typeText.setText("You Are X");
-                showType = true;
-            }
-            else {
-                typeText.setText("You Are O");
-                showType = true;
-            }
-        }
         while(true) {
+
+            String typeAndTurn = null;
+            try {
+                networkHandlerThread.readUTF();
+                networkHandlerThread.getWorker().join();
+                typeAndTurn = networkHandlerThread.getServerMessage();
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            char type = typeAndTurn.charAt(0);
+            typeString = type + "";
+            if(type=='X') opponentString = "O";
+            else opponentString = "X";
+
+                if (type == 'X') {
+                    //typeText.setText("You Are X");
+                }
+                else {
+                    //typeText.setText("You Are O");
+                }
 
             char turn = typeAndTurn.charAt(1);
             if (turn == 'X') {
-                turnText.setText("It's X's Turn");
+                //turnText.setText("It's X's Turn");
             } else {
-                turnText.setText("It's O's Turn");
+                //turnText.setText("It's O's Turn");
             }
 
             if (type == turn) {
                 for (int i = 0; i < 9; i++) {
-                    buttons[i].setEnabled(true);
+//                    if (buttons[i].getText().toString().equals(null))
+//                        buttons[i].setEnabled(true);
                     buttons[i].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -136,7 +143,7 @@ public class xoGame extends AppCompatActivity {
                             }
                         }
                     });
-
+                }
                     String result = null;
                     try {
                         networkHandlerThread.readUTF();
@@ -146,22 +153,19 @@ public class xoGame extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     if (result.startsWith(("winner")) || result.startsWith("draw")) {
-                        resultText.setText(result);
+                        //resultText.setText(result);
                         break;
                     } else {
-                        resultText.setText(result);
+                        //resultText.setText(result);
                     }
-
-                }
             }
             else{
                 String move = null;
                 try {
-                    //added to room.java
                     networkHandlerThread.readUTF();
                     networkHandlerThread.getWorker().join();
                      move = networkHandlerThread.getServerMessage();
-                     opponentMove(move);
+                     //opponentMove(move);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -174,10 +178,10 @@ public class xoGame extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 if (result.startsWith(("winner")) || result.startsWith("draw")) {
-                    resultText.setText(result);
+                    //resultText.setText(result);
                     break;
                 } else {
-                    resultText.setText(result);
+                    //resultText.setText(result);
                 }
 
             }
@@ -190,94 +194,94 @@ public class xoGame extends AppCompatActivity {
         boolean clicked = false;
         switch (v.getId()){
             case R.id.button1:{
-                buttons[0].setText(typeString);
-                networkHandlerThread.sendString("11");
+                //buttons[0].setText(typeString);
+                networkHandlerThread.sendString("00");
                 clicked = true;
                 break;
             }
             case R.id.button2:{
-                buttons[1].setText(typeString);
-                networkHandlerThread.sendString("12");
+                //buttons[1].setText(typeString);
+                networkHandlerThread.sendString("01");
                 clicked = true;
                 break;
             }
             case R.id.button3:{
-                buttons[2].setText(typeString);
-                networkHandlerThread.sendString("13");
+                //buttons[2].setText(typeString);
+                networkHandlerThread.sendString("02");
                 clicked = true;
                 break;
             }
             case R.id.button4:{
-                buttons[3].setText(typeString);
-                networkHandlerThread.sendString("21");
+                //buttons[3].setText(typeString);
+                networkHandlerThread.sendString("10");
                 clicked = true;
                 break;
             }
             case R.id.button5:{
-                buttons[4].setText(typeString);
-                networkHandlerThread.sendString("22");
+                //buttons[4].setText(typeString);
+                networkHandlerThread.sendString("11");
                 clicked = true;
                 break;
             }
             case R.id.button6:{
-                buttons[5].setText(typeString);
-               networkHandlerThread.sendString("23");
+                //buttons[5].setText(typeString);
+               networkHandlerThread.sendString("12");
                 clicked = true;
                 break;
             }
             case R.id.button7:{
-                buttons[6].setText(typeString);
-                networkHandlerThread.sendString("31");
+                //buttons[6].setText(typeString);
+                networkHandlerThread.sendString("20");
                 clicked = true;
                 break;
             }
             case R.id.button8:{
-                buttons[7].setText(typeString);
-                networkHandlerThread.sendString("32");
+                //buttons[7].setText(typeString);
+                networkHandlerThread.sendString("21");
                 clicked = true;
                 break;
             }
             case R.id.button9:{
-                buttons[8].setText(typeString);
-                networkHandlerThread.sendString("33");
+                //buttons[8].setText(typeString);
+                networkHandlerThread.sendString("22");
                 clicked = true;
                 break;
             }
         }
-        if(clicked) {
-            for (int i = 0; i < 9; i++) {
-                buttons[i].setEnabled(false);
-            }
-        }
+//        if(clicked) {
+//            for (int i = 0; i < 9; i++) {
+//                buttons[i].setEnabled(false);
+//            }
+//        }
     }
 
     public void opponentMove(String move){
         switch(move){
-            case "11":
+            case "00":
                 buttons[0].setText(opponentString);
                 break;
-            case "12":
+            case "01":
                 buttons[1].setText(opponentString);
                 break;
-            case "13":
+            case "02":
                 buttons[2].setText(opponentString);
                 break;
-            case "21":
+            case "10":
                 buttons[3].setText(opponentString);
                 break;
-            case "22":
+            case "11":
                 buttons[4].setText(opponentString);
                 break;
-            case "23":
+            case "12":
                 buttons[5].setText(opponentString);
                 break;
-            case "31":
+            case "20":
                 buttons[6].setText(opponentString);
                 break;
-            case "32":
+            case "21":
                 buttons[7].setText(opponentString);
                 break;
-            case "33":
+            case "22":
                 buttons[8].setText(opponentString);
                 break;
         }

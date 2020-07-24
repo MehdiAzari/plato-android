@@ -3,11 +3,15 @@
 //import android.annotation.SuppressLint;
 //import android.os.Bundle;
 //import android.os.StrictMode;
+//import android.util.Log;
 //import android.widget.EditText;
 //import android.widget.TextView;
 //
 //import androidx.annotation.Nullable;
 //import androidx.appcompat.app.AppCompatActivity;
+//
+//import com.plato.NetworkHandlerThread;
+//import com.plato.R;
 //
 //import java.io.IOException;
 //import java.io.ObjectInputStream;
@@ -27,7 +31,7 @@
 //        StrictMode.setThreadPolicy(policy);
 //
 //        try {
-//            networkHandlerThread = new NetworkHandlerThread();
+//            networkHandlerThread =  NetworkHandlerThread.getInstance();
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -38,24 +42,30 @@
 //        EditText editText = findViewById(R.id.editText);
 //
 //        try {
-//            networkHandlerThread.oos.reset();
-//            networkHandlerThread.oos.writeUTF("make_room");
-//            networkHandlerThread.oos.flush();
-//            networkHandlerThread.oos.writeUTF("casual");
-//            networkHandlerThread.oos.flush();
-//            networkHandlerThread.oos.writeUTF("guessWord");
-//            networkHandlerThread.oos.flush();
-//            networkHandlerThread.oos.writeInt(2);
-//            networkHandlerThread.oos.flush();
-//        } catch (IOException e) {
+//
+//            networkHandlerThread.sendString("make_room");
+//            networkHandlerThread.getWorker().join();
+//            Log.i("log1", "read1");
+//            networkHandlerThread.sendString("guessWord");
+//            networkHandlerThread.getWorker().join();
+//            Log.i("log2", "read2");
+//            networkHandlerThread.sendString("casual");
+//            networkHandlerThread.getWorker().join();
+//            Log.i("log3", "read3");
+//            networkHandlerThread.sendInt(2);
+//            networkHandlerThread.getWorker().join();
+//            Log.i("log4", "read4");
+//        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
 //
 //        String role = null;
 //        for (int i = 0; i < 4; i++) {
 //            try {
-//                 role = networkHandlerThread.ois.readUTF();
-//            } catch (IOException e) {
+//                networkHandlerThread.readUTF();
+//                networkHandlerThread.getWorker().join();
+//                role = networkHandlerThread.getServerMessage();
+//            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
 //
@@ -66,16 +76,19 @@
 //                guessText.setText("Choose A Word : ");
 //                 answer = editText.getText().toString();
 //                try {
-//                    networkHandlerThread.oos.writeUTF(answer);
-//                } catch (IOException e) {
+//                    networkHandlerThread.sendString(answer);
+//                    networkHandlerThread.getWorker().join();
+//                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
 //            }
 //             if(role.equals("guess")){
 //                 guessText.setText("Guess The word : ");
 //                try {
-//                    answer = networkHandlerThread.ois.readUTF();
-//                } catch (IOException e) {
+//                    networkHandlerThread.readUTF();
+//                    networkHandlerThread.getWorker().join();
+//                    answer = networkHandlerThread.getServerMessage();
+//                } catch (InterruptedException e) {
 //                    e.printStackTrace();
 //                }
 //                 length = answer.length();
@@ -92,17 +105,18 @@
 //                     }
 //                 }
 //                 try {
-//                     networkHandlerThread.oos.reset();
-//                     networkHandlerThread.oos.writeUTF(guessText.getText().toString());
-//                     networkHandlerThread.oos.flush();
-//                 } catch (IOException e) {
+//                     networkHandlerThread.sendString(guessText.getText().toString());
+//                     networkHandlerThread.getWorker().join();
+//                 } catch (InterruptedException e) {
 //                     e.printStackTrace();
 //                 }
 //
 //                 String result = null;
 //                 try {
-//                     result = networkHandlerThread.ois.readUTF();
-//                 } catch (IOException e) {
+//                     networkHandlerThread.readUTF();
+//                     networkHandlerThread.getWorker().join();
+//                     result = networkHandlerThread.getServerMessage();
+//                 } catch (InterruptedException e) {
 //                     e.printStackTrace();
 //                 }
 //
