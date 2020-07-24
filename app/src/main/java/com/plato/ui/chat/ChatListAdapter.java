@@ -1,7 +1,5 @@
 package com.plato.ui.chat;
 
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.plato.MainActivity;
 import com.plato.NetworkHandlerThread;
 import com.plato.R;
 import com.plato.server.Conversation;
@@ -24,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.TaskViewHolder> {
+public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
     public static ArrayList<User> mExampleList;
     private NetworkHandlerThread networkHandlerThread;
     private OnItemClickListener mListener;
@@ -37,13 +33,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.TaskVi
         mListener = listener;
     }
 
-    public static class TaskViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mAvatar;
         public TextView mName;
         public TextView mLastMsg;
 
-        public TaskViewHolder(View itemView, final OnItemClickListener listener) {
+        public ViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
 
             mAvatar = itemView.findViewById(R.id.chatlist_avatar);
@@ -77,18 +73,18 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.TaskVi
     }
 
     @Override
-    public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chatlist_item, parent, false);
         try {
             networkHandlerThread = NetworkHandlerThread.getInstance();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new TaskViewHolder(v, mListener);
+        return new ViewHolder(v, mListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final TaskViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final User currentUser = mExampleList.get(position);
 
 //        Log.i("rec",currentUser.getUsername());

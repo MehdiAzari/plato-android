@@ -25,7 +25,7 @@
             app:srcCompat="@drawable/ic_avatar" />
 
         <TextView
-            android:id="@+id/plato_text"
+            android:id="@+id/appbar_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Plato"

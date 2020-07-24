@@ -2,14 +2,13 @@ package com.plato.ui.chat;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,8 +21,7 @@ import com.plato.server.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Date;
 
 ;
 
@@ -33,58 +31,86 @@ public class ConversationActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MessageListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private Conversation conversation;
     private int lastItemPosition = 0;
-    private User Client;
-    private User destUser;
+    private User client;
+    private String destUser;
+    private TextView appbarTV;
+    private EditText chatInput;
+    private Button sendBtn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
-        Log.i("recTest","FUCKU");
+        appbarTV = findViewById(R.id.appbar_text);
+        sendBtn = findViewById(R.id.button_chatbox_send);
+        chatInput = findViewById(R.id.edittext_chatbox);
+        destUser = getIntent().getStringExtra("destUser");
+        String text = "Chating with "+destUser ;
+        appbarTV.setText(text);
+
 
         try {
             networkHandlerThread = NetworkHandlerThread.getInstance();
-            Client = networkHandlerThread.getUser();
+            client = networkHandlerThread.getUser();
 
-        } catch (IOException e) { e.printStackTrace();}
-
-            Log.i("recTest","FUCKU2");
-//            String username = getIntent().getStringExtra("destUser");
-
-            destUser = (User) getIntent().getSerializableExtra("destUser");
-
-
-            mRecyclerView = findViewById(R.id.recyclerview_message_list);
-            mRecyclerView.setHasFixedSize(true);
-            ArrayList<Message> messages = Client.getConversations().get(destUser).getMessages();
-            User client = networkHandlerThread.getUser();
-            ConcurrentHashMap<User, Conversation> c = client.getConversations();
-//            Iterator itr = c.keySet().iterator();
-
-//            while (itr.hasNext()){
-//                User next = (User) itr.next();
-//                if(next.getUsername().equals(username))
-//                    destUser = next;
-//            }
-
-            Conversation conversation = c.get(destUser);
-            ArrayList<Message> list = conversation.getMessages();
-            Log.i("recTest",((TextMessage)list.get(0)).getContent());
-            mLayoutManager = new LinearLayoutManager(getApplicationContext());
-            mAdapter = new MessageListAdapter(list);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-            mRecyclerView.setAdapter(mAdapter);
-
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+         conversation = (Conversation) getIntent().getSerializableExtra("c");
+        if (conversation == null) {
+            Log.i("recTest", "its null :)");
+        }
+        ArrayList<Message> list = conversation.getMessages();
+
+        if (list == null)
+            Log.i("recTest", "list is null :)");
+
+        mRecyclerView = findViewById(R.id.recyclerview_conversation);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = new MessageListAdapter(list);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setAdapter(mAdapter);
+
+
+        sendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String s = chatInput.getText().toString();
+                TextMessage msg = new TextMessage(new Date(),client,s);
+                conversation.sendMessage(msg);
+                mAdapter.notifyItemInserted(mAdapter.getItemCount()+1);
+/*
+                try {
+
+
+                    networkHandlerThread.sendUTF("send_message");
+                    networkHandlerThread.join();
+                    Log.i("chatTest","sending to "+ destUser);
+                    networkHandlerThread.sendUTF(destUser);
+                    networkHandlerThread.join();
+                    networkHandlerThread.sendUTF(s);
+                    networkHandlerThread.join();
+
+                    Log.i("chatTest","sent msg to sv");
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                */
+            }
+        });
+
+    }
 
 
     @Override
     public void onResume() {
         super.onResume();
 
-        mAdapter.notifyItemChanged(lastItemPosition);
         mAdapter.notifyDataSetChanged();
     }
 }

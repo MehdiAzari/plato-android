@@ -18,6 +18,8 @@ import com.plato.MainActivity;
 import com.plato.NetworkHandlerThread;
 import com.plato.R;
 import com.plato.server.Conversation;
+import com.plato.server.Message;
+import com.plato.server.TextMessage;
 import com.plato.server.User;
 
 import java.io.IOException;
@@ -52,7 +54,7 @@ public class ChatFragment extends Fragment {
                 while (true){
                     User client = networkHandlerThread.getUser();
                     try {
-                        Thread.sleep(3000); //updates chat every 3 sec
+                        Thread.sleep(2000); //updates chat every 3 sec
                         networkHandlerThread.sendUTF("update_chat");
                         networkHandlerThread.join();
                         networkHandlerThread.readObject();
@@ -71,7 +73,7 @@ public class ChatFragment extends Fragment {
                 }
             }
         });
-       // chatUpdater.start();
+//        chatUpdater.start();
     }
 
     @Nullable
@@ -90,10 +92,21 @@ public class ChatFragment extends Fragment {
         mAdapter.setOnItemClickListener(new ChatListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
+                lastItemPosition = position;
+                User client = networkHandlerThread.getUser();
+                User dest = users.get(position);
+                ConcurrentHashMap<User,Conversation> c = client.getConversations();
+                Conversation conversation = c.get(dest);
+
+
+//                Log.i("recTest", String.valueOf(list.isEmpty()));
+
+
                 Intent intent = new Intent(getContext(), ConversationActivity.class);
                 lastItemPosition = position;
                 intent.putExtra("pos",position);
-                intent.putExtra("destUser", users.get(position));
+                intent.putExtra("destUser",dest.getUsername());
+                intent.putExtra("c", conversation);
                 startActivity(intent);
             }
         });
@@ -104,8 +117,9 @@ public class ChatFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mAdapter.notifyItemChanged(lastItemPosition);
+        mAdapter.notifyItemInserted(lastItemPosition);
         mAdapter.notifyDataSetChanged();
+
     }
 }
 
